@@ -1,14 +1,15 @@
 @top JsonText { value }
 
-value { True | False | Null | Number | String | Object | Array }
+value { whitespace? (True | False | Null | Number | String | Object | Array) whitespace? }
 
 String[isolate] { string }
-Object { "{" list<Property>? "}" }
-Array  { "[" list<value>? "]" }
+Object { "{" (whitespace | list<Property>)? "}" }
+Array  { "[" (whitespace | list<value>)? "]" }
 
-Property { PropertyName ":" value }
+Property { whitespace? PropertyName whitespace? ":" value }
 PropertyName[isolate] { string }
 
+string {'"' (char|Esc)* '"'}
 
 @tokens {
   True  { "true" }
@@ -20,17 +21,15 @@ PropertyName[isolate] { string }
   frac { '.' @digit+ }
   exp  { $[eE] $[+\-]? @digit+ }
 
-  string { '"' char* '"' }
-  char { $[\u{20}\u{21}\u{23}-\u{5b}\u{5d}-\u{10ffff}] | "\\" esc }
-  esc  { $["\\\/bfnrt] | "u" hex hex hex hex }
+  char { $[\u{20}\u{21}\u{23}-\u{5b}\u{5d}-\u{10ffff}] }
+  Esc  { "\\" ( $["\\\/bfnrt] | "u" hex hex hex hex) }
   hex  { $[0-9a-fA-F] }
 
-  whitespace { $[ \n\r\t] }
+  whitespace { $[ \n\r\t]+ }
 
   "{" "}" "[" "]" "," ":"
 }
 
-@skip { whitespace }
 list<item> { item ("," item)* }
 
 @external propSource jsonHighlighting from "./highlight"

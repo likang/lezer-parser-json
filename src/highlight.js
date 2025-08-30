@@ -8,5 +8,6 @@ export const jsonHighlighting = styleTags({
   Null: t.null,
   ", :": t.separator,
   "[ ]": t.squareBracket,
-  "{ }": t.brace
+  "{ }": t.brace,
+  "Esc": t.escape
 })
